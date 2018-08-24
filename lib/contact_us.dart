@@ -1,6 +1,28 @@
 import 'package:flutter/material.dart';
 
-class ContactUs extends StatelessWidget {
+class ContactUs extends StatefulWidget {
+  @override
+  ContactUsState createState() {
+    return new ContactUsState();
+  }
+}
+
+class ContactUsState extends State<ContactUs> {
+  final Cname = TextEditingController();
+  final Cmail = TextEditingController();
+  final Croll = TextEditingController();
+  final Cstory = TextEditingController();
+
+
+  void dispose() {
+    // TODO: implement dispose
+    Cstory.dispose();
+    Croll.dispose();
+    Cmail.dispose();
+    Cname.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -35,31 +57,35 @@ class ContactUs extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.person),
-                title: TextField(
+                title: TextFormField(
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(5.0),
                     hintText: "Name *",
                   ),
+                  controller: Cname,
                 ),
               ),
               ListTile(
                 leading: const Icon(Icons.mail),
-                title: TextField(
+                title: TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(5.0),
                     hintText: "Email *",
                   ),
+                  controller: Cmail,
+                  validator: (val) => !val.contains('@') ? 'Not a valid email.' : null,
                 ),
               ),
               ListTile(
                 leading: const Icon(Icons.child_care),
-                title: TextField(
+                title: TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(5.0),
                     hintText: "Roll Number *",
                   ),
+                  controller: Croll,
                 ),
               ),
               const SizedBox(height: 5.0),
@@ -72,6 +98,7 @@ class ContactUs extends StatelessWidget {
                   helperText: 'Keep it short, we will contact for the rest.',
                   labelText: 'Story',
                 ),
+                controller: Cstory,
                 maxLines: 3,
               ),
               ),
@@ -79,7 +106,18 @@ class ContactUs extends StatelessWidget {
                 padding: EdgeInsets.all(10.0),
               ),
               RaisedButton(
-                onPressed: () {},
+                onPressed: () {
+                  return showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        // Retrieve the text the user has typed in using our
+                        // TextEditingController
+                        content: Text(Cname.text+Cmail.text+Croll.text+Cstory.text),
+                      );
+                    },
+                  );
+                },
                 elevation: 1.5,
                 child: Icon(
                     Icons.send,
@@ -98,7 +136,10 @@ class ContactUs extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: <Widget>[
                   Text(
-                    "Version: Dev"
+                    "Version: Dev\n"
+                        "\u00a9 HIT TIMES "
+                        "Coders Team",
+                    textAlign: TextAlign.right,
                   ),
                 ],
               ),
