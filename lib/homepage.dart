@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:the_hit_times/contact_us.dart';
 import 'package:the_hit_times/news.dart';
 import 'bottom_nav_gallery.dart';
-import 'package:the_hit_times/CenterPage.dart';
+import 'package:the_hit_times/menu.dart';
 
 
 class MainPage extends StatefulWidget {
@@ -98,7 +98,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin{
             offstage: _currentIndex != 0,
             child: new TickerMode(
               enabled: _currentIndex == 0,
-              child: new Container(child : new CenterPage()),
+              child: new Container(child : new SMenu()),
             ),
           ),
           new Offstage(
