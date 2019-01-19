@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:the_hit_times/contact_us.dart';
+import 'package:the_hit_times/menu2.dart';
 import 'package:the_hit_times/news.dart';
 import 'bottom_nav_gallery.dart';
-import 'package:the_hit_times/menu.dart';
+import 'package:the_hit_times/smenu.dart';
 
 
 class MainPage extends StatefulWidget {
@@ -13,6 +14,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with TickerProviderStateMixin{
 
   int _currentIndex = 1;
+
   BottomNavigationBarType _type = BottomNavigationBarType.shifting;
   List<NavigationIconView> _navigationViews;
   PageController _pageController;
@@ -22,21 +24,33 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin{
     super.initState();
     _navigationViews = <NavigationIconView>[
       new NavigationIconView(
-        icon: const Icon(Icons.menu),
+        icon: IconTheme(
+            data: new IconThemeData(
+                color: Color(0xFFdff9fb)),
+            child: Icon(Icons.menu)
+        ),
         title: 'Menu',
-        color: Colors.black,
+        color: Color(0xFF2f3542),
         vsync: this,
       ),
       new NavigationIconView(
-        icon: const Icon(Icons.assignment),
+        icon: IconTheme(
+            data: new IconThemeData(
+                color: Color(0xFFdff9fb)),
+            child: Icon(Icons.assignment)
+        ),
         title: 'News',
-        color: Colors.black,
+        color: Color(0xFF2f3542),
         vsync: this,
       ),
       new NavigationIconView(
-        icon: const Icon(Icons.info_outline),
+        icon: IconTheme(
+            data: new IconThemeData(
+                color: Color(0xFFdff9fb)),
+            child: Icon(Icons.info_outline)
+        ),
         title: 'Contact Us',
-        color: Colors.black,
+        color: Color(0xFF2f3542),
         vsync: this,
       ),
     ];
@@ -69,6 +83,27 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin{
     });
   }
 
+  void _onHorizontalDrag(DragEndDetails details) {
+    if(details.primaryVelocity == 0) return; // user have just tapped on screen (no dragging)
+
+    if (details.primaryVelocity.compareTo(0) == -1) {
+      print('dragged from left');
+      print(_currentIndex);
+      setState((){
+        if(_currentIndex<2) {
+          _currentIndex++;
+        }
+      });
+    }
+    else {
+      print('dragged from right');
+      print(_currentIndex);
+      setState((){
+        if(_currentIndex>0)
+          _currentIndex--;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,30 +127,48 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin{
         title: const Text('The HIT Times'),
         centerTitle: true,
       ),
-      body: new Stack(
-        children: <Widget>[
-          new Offstage(
-            offstage: _currentIndex != 0,
-            child: new TickerMode(
-              enabled: _currentIndex == 0,
-              child: new Container(child : new SMenu()),
+
+      body: GestureDetector(
+        onHorizontalDragEnd: (DragEndDetails details) => _onHorizontalDrag(details),
+        child: new Stack(
+          children: <Widget>[
+            new Offstage(
+              offstage: _currentIndex != 0,
+              child: new TickerMode(
+                enabled: _currentIndex == 0,
+                child: new Container(child : new SMenu()),
+              ),
             ),
-          ),
-          new Offstage(
-            offstage: _currentIndex != 1,
-            child: new TickerMode(
-              enabled: _currentIndex == 1,
-              child: new Container(child: new News()),
+            new Offstage(
+              offstage: _currentIndex != 1,
+              child: new TickerMode(
+                enabled: _currentIndex == 1,
+                child: new Container(
+                    child: new News()
+                ),
+              ),
             ),
-          ),
-          new Offstage(
-            offstage: _currentIndex != 2,
-            child: new TickerMode(
-              enabled: _currentIndex == 2,
-              child: new Container(child: new ContactUs()),
+            new Offstage(
+              offstage: _currentIndex != 2,
+              child: new TickerMode(
+                enabled: _currentIndex == 2,
+                child: new Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: FractionalOffset.topCenter,
+                        end: FractionalOffset.bottomCenter,
+                        colors: [const Color(0xFFBDFFF3), const Color(0xFFffffff), const Color(0xFFBDFFF3)], // whitish to gray
+                        stops: [0.0,0.3,1.0],
+                        tileMode: TileMode.mirror, // repeats the gradient over the canvas
+                      ),
+                    ),
+                    height: MediaQuery.of(context).size.height,
+                    child: new ContactUs()
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: botNavBar,
     );

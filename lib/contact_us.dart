@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'dart:async';
 
 class ContactUs extends StatefulWidget {
   @override
@@ -8,28 +10,49 @@ class ContactUs extends StatefulWidget {
 }
 
 class ContactUsState extends State<ContactUs> {
-  final Cname = TextEditingController();
-  final Cmail = TextEditingController();
-  final Croll = TextEditingController();
-  final Cstory = TextEditingController();
+  static const platform = const MethodChannel("hit.times.com/mailer");
 
+  final TextEditingController _name = new TextEditingController();
+  final TextEditingController _email = new TextEditingController();
+  final TextEditingController _roll = new TextEditingController();
+  final TextEditingController _story = new TextEditingController();
 
-  void dispose() {
-    // TODO: implement dispose
-    Cstory.dispose();
-    Croll.dispose();
-    Cmail.dispose();
-    Cname.dispose();
-    super.dispose();
+  final GlobalKey<FormState> _formkey = new GlobalKey<FormState>();
+  _FormData _data = new _FormData();
+
+  bool _isDisable(){
+    return false;
+  }
+  void submit(){
+    if(this._formkey.currentState.validate()) {
+      _formkey.currentState.save();
+      String mail = "${_data.name}~${_data.email}~${_data.roll}~${_data.story}";
+      send(mail);
+      print(mail);
+      setState((){
+        _name.clear();
+        _email.clear();
+        _roll.clear();
+        _story.clear();
+      });
+    }
+  }
+  static Future<void> send(mail) async {
+      try {
+         await platform.invokeMethod('getMessage',<String, dynamic>{"mail": mail});
+      }
+      catch (e) {
+        print(e);
+      }
   }
 
   @override
   Widget build(BuildContext context) {
+    final Size screenSize = MediaQuery.of(context).size;
+
     return SingleChildScrollView(
-      //body: new SafeArea(
-        //top: false,
-        //bottom: false,
         child: Form(
+          key: this._formkey,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -39,90 +62,109 @@ class ContactUsState extends State<ContactUs> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   //Padding(padding: EdgeInsets.all(0.0)),
-                  Container(
-                    padding: EdgeInsets.only(left: 21.5,right: 21.5,top: 10.0),
-                    child: Text(
-                        "Got Something interesting to share."
-                            "\nWrite to us.",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          height: 1.0,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Anson",
-                        ),
+                  GestureDetector(
+                    onPanDown: (DragDownDetails details){print('Hello');},
+                    child: Container(
+                      width: screenSize.width,
+                      decoration: new BoxDecoration(
+                        boxShadow: [new BoxShadow(
+                            color: Colors.black,
+                            blurRadius: 5.0,)],
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only( bottomLeft:Radius.circular(70.0),bottomRight: Radius.circular(70.0) ),
+                      ),
+                      padding: EdgeInsets.only(left: 5.0,right: 5.0,top: 5.0,bottom: 5.0),
+                      child: Text(
+                          "Got Something interesting to share."
+                              "\nWrite to us.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            height: 1.0,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Anson",
+                          ),
+                      ),
                     ),
                   ),
                 ],
               ),
+              Padding(
+                  padding: EdgeInsets.all(7.0)
+              ),
               ListTile(
                 leading: const Icon(Icons.person),
                 title: TextFormField(
+                  controller: _name,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(5.0),
                     hintText: "Name *",
                   ),
-                  controller: Cname,
+                  validator: (val) => val.isEmpty ? 'Need to know you Mr.Anonymous' : null,
+                  onSaved: (String value){
+                    this._data.name = value;
+                  },
                 ),
               ),
               ListTile(
                 leading: const Icon(Icons.mail),
                 title: TextFormField(
+                  controller: _email,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(5.0),
                     hintText: "Email *",
                   ),
-                  controller: Cmail,
                   validator: (val) => !val.contains('@') ? 'Not a valid email.' : null,
+                  onSaved: (String value){
+                    this._data.email = value;
+                  },
                 ),
               ),
               ListTile(
                 leading: const Icon(Icons.child_care),
                 title: TextFormField(
+                  controller: _roll,
                   keyboardType: TextInputType.emailAddress,
                   decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(5.0),
                     hintText: "Roll Number *",
                   ),
-                  controller: Croll,
+                  validator: validateRoll,
+                  onSaved: (String value){
+                    this._data.roll = value;
+                  },
                 ),
               ),
               const SizedBox(height: 5.0),
               Padding(
                 padding: EdgeInsets.all(10.0),
                 child:TextFormField(
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  hintText: 'Tell us about the happening',
-                  helperText: 'Keep it short, we will contact for the rest.',
-                  labelText: 'Story',
+                  controller: _story,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    hintText: 'Tell us about the happening',
+                    helperText: 'Keep it short, we will contact for the rest.',
+                    labelText: 'Story',
                 ),
-                controller: Cstory,
                 maxLines: 3,
+                validator: (val) => val.isEmpty ? 'Fill this please' : null,
+                onSaved: (String value){
+                  this._data.story = value;
+                },
               ),
               ),
               Padding(
                 padding: EdgeInsets.all(10.0),
               ),
               RaisedButton(
-                onPressed: () {
-                  return showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        // Retrieve the text the user has typed in using our
-                        // TextEditingController
-                        content: Text(Cname.text+Cmail.text+Croll.text+Cstory.text),
-                      );
-                    },
-                  );
-                },
+                onPressed: _isDisable()? null : this.submit,
                 elevation: 1.5,
                 child: Icon(
                     Icons.send,
                     color: Colors.white,
                 ),
+                disabledColor: Colors.grey,
                 color: Colors.green,
               ),
               Padding(
@@ -148,4 +190,20 @@ class ContactUsState extends State<ContactUs> {
         ),
     );
   }
+
+  String validateRoll(String value) {
+    Pattern pattern =
+        r'^(\d{2})(\/)([a-z]{2,3})(\/)(\d{1,3})$';
+    RegExp regex = new RegExp(pattern);
+    if (!regex.hasMatch(value))
+      return 'Enter a valid Roll';
+    else
+      return null;
+  }
+}
+class _FormData{
+  String name = '';
+  String email = '';
+  String roll = '';
+  String story = '';
 }

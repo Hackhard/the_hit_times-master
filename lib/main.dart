@@ -10,8 +10,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: "THE HIT TIMES",
       theme: ThemeData(
-        primaryColor: Colors.black,
-        accentColor: Colors.black,
+        primaryColor: Color(0xFF2f3542),
+        accentColor: Color(0xFF130f40),
         //brightness: Brightness.dark,
       ),
       home: new MainPage(),
