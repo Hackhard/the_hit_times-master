@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:the_hit_times/contact_us.dart';
-import 'package:the_hit_times/menu2.dart';
 import 'package:the_hit_times/news.dart';
 import 'bottom_nav_gallery.dart';
 import 'package:the_hit_times/smenu.dart';
@@ -30,7 +29,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin{
             child: Icon(Icons.menu)
         ),
         title: 'Menu',
-        color: Color(0xFF2f3542),
+        color: Color(0xFF000000),
         vsync: this,
       ),
       new NavigationIconView(
@@ -40,7 +39,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin{
             child: Icon(Icons.assignment)
         ),
         title: 'News',
-        color: Color(0xFF2f3542),
+        color: Color(0xFF000000),
         vsync: this,
       ),
       new NavigationIconView(
@@ -50,7 +49,7 @@ class _MainPageState extends State<MainPage> with TickerProviderStateMixin{
             child: Icon(Icons.info_outline)
         ),
         title: 'Contact Us',
-        color: Color(0xFF2f3542),
+        color: Color(0xFF000000),
         vsync: this,
       ),
     ];

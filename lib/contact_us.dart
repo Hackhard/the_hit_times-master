@@ -193,8 +193,8 @@ class ContactUsState extends State<ContactUs> {
 
   String validateRoll(String value) {
     Pattern pattern =
-        r'^(\d{2})(\/)([a-z]{2,3})(\/)(\d{1,3})$';
-    RegExp regex = new RegExp(pattern);
+        r'^(\d{2})(\/)([A-Z]{2,3})(\/)(\d{1,3})$';
+    RegExp regex = new RegExp(pattern,caseSensitive: false);
     if (!regex.hasMatch(value))
       return 'Enter a valid Roll';
     else
